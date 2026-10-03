@@ -1,0 +1,1871 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Oakridge Academy - Smart AI Campus Assistant</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  <!-- Lucide Icons via CDN for modern UI iconography -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  
+  <style>
+    /* ==========================================================================
+       1. CSS VARIABLES & THEMES
+       ========================================================================== */
+    :root {
+      --font-main: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      --font-display: 'Space Grotesk', sans-serif;
+      
+      /* Light Theme Colors */
+      --bg-body: #f8fafc;
+      --bg-surface: #ffffff;
+      --bg-surface-elevated: #f1f5f9;
+      --border-color: #e2e8f0;
+      --border-focus: #3b82f6;
+      
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --text-inverse: #ffffff;
+      
+      --primary: #1d4ed8;
+      --primary-hover: #1e40af;
+      --primary-light: #eff6ff;
+      --accent: #0ea5e9;
+      --accent-glow: rgba(14, 165, 233, 0.15);
+      
+      --user-bubble: #1d4ed8;
+      --user-text: #ffffff;
+      --ai-bubble: #ffffff;
+      --ai-border: #e2e8f0;
+      --ai-text: #1e293b;
+      
+      --badge-bg: #dbeafe;
+      --badge-text: #1e40af;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+      --shadow-lg: 0 10px 25px -3px rgba(15, 23, 42, 0.08), 0 4px 6px -4px rgba(15, 23, 42, 0.04);
+      --shadow-xl: 0 20px 30px -10px rgba(15, 23, 42, 0.12);
+      
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 18px;
+      --radius-full: 9999px;
+      
+      --header-h: 74px;
+    }
+
+    [data-theme="dark"] {
+      --bg-body: #0b1120;
+      --bg-surface: #131c31;
+      --bg-surface-elevated: #1e293b;
+      --border-color: #27354f;
+      --border-focus: #60a5fa;
+      
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-inverse: #0f172a;
+      
+      --primary: #3b82f6;
+      --primary-hover: #60a5fa;
+      --primary-light: rgba(59, 130, 246, 0.12);
+      --accent: #38bdf8;
+      --accent-glow: rgba(56, 189, 248, 0.2);
+      
+      --user-bubble: #2563eb;
+      --user-text: #ffffff;
+      --ai-bubble: #17223b;
+      --ai-border: #2c3c5a;
+      --ai-text: #f1f5f9;
+      
+      --badge-bg: rgba(59, 130, 246, 0.2);
+      --badge-text: #93c5fd;
+      
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+      --shadow-lg: 0 10px 25px -3px rgba(0, 0, 0, 0.5);
+      --shadow-xl: 0 20px 30px -10px rgba(0, 0, 0, 0.6);
+    }
+
+    /* ==========================================================================
+       2. BASE RESET & TYPOGRAPHY
+       ========================================================================== */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      font-family: var(--font-main);
+      background-color: var(--bg-body);
+      color: var(--text-main);
+      line-height: 1.6;
+      transition: background-color 0.25s ease, color 0.25s ease;
+      overflow-x: hidden;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button {
+      font-family: inherit;
+      cursor: pointer;
+      border: none;
+      background: none;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* ==========================================================================
+       3. NAVIGATION BAR
+       ========================================================================== */
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      height: var(--header-h);
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-color);
+      transition: background-color 0.25s ease, border-color 0.25s ease;
+    }
+    [data-theme="dark"] .navbar {
+      background: rgba(19, 28, 49, 0.85);
+    }
+
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 100%;
+    }
+
+    .brand-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 700;
+      font-size: 1.25rem;
+      letter-spacing: -0.02em;
+    }
+
+    .brand-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: var(--radius-md);
+      background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      box-shadow: 0 4px 12px rgba(29, 78, 216, 0.25);
+    }
+
+    .brand-text h1 {
+      font-size: 1.15rem;
+      font-weight: 800;
+      line-height: 1.2;
+      color: var(--text-main);
+    }
+
+    .brand-text span {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .nav-links a:hover,
+    .nav-links a.active {
+      color: var(--primary);
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .theme-toggle-btn, .config-modal-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg-surface-elevated);
+      color: var(--text-main);
+      border: 1px solid var(--border-color);
+      transition: all 0.2s ease;
+    }
+
+    .theme-toggle-btn:hover, .config-modal-btn:hover {
+      background: var(--primary-light);
+      color: var(--primary);
+      border-color: var(--primary);
+    }
+
+    .cta-portal-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 18px;
+      background: var(--primary);
+      color: #ffffff;
+      font-size: 0.9rem;
+      font-weight: 600;
+      border-radius: var(--radius-full);
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+      transition: transform 0.15s ease, background-color 0.2s;
+    }
+    .cta-portal-btn:hover {
+      background: var(--primary-hover);
+      transform: translateY(-1px);
+    }
+
+    .mobile-menu-btn {
+      display: none;
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-md);
+      align-items: center;
+      justify-content: center;
+      background: var(--bg-surface-elevated);
+      color: var(--text-main);
+      border: 1px solid var(--border-color);
+    }
+
+    /* ==========================================================================
+       4. HERO & NOTICE BANNER
+       ========================================================================== */
+    .hero-banner {
+      padding: 36px 0 20px 0;
+      text-align: center;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      background: var(--badge-bg);
+      color: var(--badge-text);
+      font-size: 0.8rem;
+      font-weight: 700;
+      border-radius: var(--radius-full);
+      margin-bottom: 16px;
+      border: 1px solid rgba(59, 130, 246, 0.2);
+    }
+
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--success);
+      border-radius: 50%;
+      box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+      70% { box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+    }
+
+    .hero-title {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+      margin-bottom: 12px;
+      color: var(--text-main);
+    }
+
+    .hero-title span {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-subtitle {
+      max-width: 650px;
+      margin: 0 auto;
+      font-size: 1.05rem;
+      color: var(--text-muted);
+    }
+
+    /* ==========================================================================
+       5. CHATBOT APPLICATION CONTAINER
+       ========================================================================== */
+    .chat-section {
+      padding: 24px 0 60px 0;
+    }
+
+    .chat-wrapper {
+      max-width: 1040px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      background: var(--bg-surface);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow-xl);
+      overflow: hidden;
+      min-height: 640px;
+      height: 720px;
+    }
+
+    /* Sidebar info & suggested topics */
+    .chat-sidebar {
+      background: var(--bg-surface-elevated);
+      border-right: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+      gap: 20px;
+    }
+
+    .sidebar-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .sidebar-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .new-chat-btn {
+      width: 100%;
+      padding: 10px 16px;
+      background: var(--bg-surface);
+      color: var(--text-main);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      font-weight: 600;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+      box-shadow: var(--shadow-sm);
+    }
+    .new-chat-btn:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+      background: var(--primary-light);
+    }
+
+    .topics-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      overflow-y: auto;
+      flex-grow: 1;
+      padding-right: 4px;
+    }
+
+    .topic-chip {
+      text-align: left;
+      padding: 10px 14px;
+      border-radius: var(--radius-md);
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      font-size: 0.85rem;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.15s ease;
+      line-height: 1.35;
+    }
+
+    .topic-chip i {
+      color: var(--primary);
+      flex-shrink: 0;
+    }
+
+    .topic-chip:hover {
+      background: var(--primary-light);
+      border-color: var(--primary);
+      color: var(--primary);
+      transform: translateX(3px);
+    }
+
+    .api-status-box {
+      padding: 12px;
+      border-radius: var(--radius-md);
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      font-size: 0.78rem;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .status-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-weight: 700;
+    }
+    .status-badge.online { color: var(--success); }
+    .status-badge.config { color: var(--warning); }
+
+    .config-trigger {
+      color: var(--primary);
+      font-weight: 600;
+      text-decoration: underline;
+      cursor: pointer;
+      text-align: left;
+      font-size: 0.75rem;
+    }
+
+    /* Main Chat Area */
+    .chat-main {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      background: var(--bg-surface);
+    }
+
+    .chat-header {
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--bg-surface);
+    }
+
+    .assistant-profile {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .bot-avatar {
+      position: relative;
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-md);
+      background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2);
+    }
+
+    .bot-avatar .online-indicator {
+      position: absolute;
+      bottom: -2px;
+      right: -2px;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--success);
+      border: 2px solid var(--bg-surface);
+    }
+
+    .assistant-details h3 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .assistant-details p {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .chat-header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .icon-action-btn {
+      padding: 8px 12px;
+      border-radius: var(--radius-md);
+      background: var(--bg-surface-elevated);
+      color: var(--text-muted);
+      border: 1px solid var(--border-color);
+      font-size: 0.85rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+    .icon-action-btn:hover {
+      color: var(--danger);
+      background: rgba(239, 68, 68, 0.08);
+      border-color: rgba(239, 68, 68, 0.2);
+    }
+
+    /* Messages Stream */
+    .messages-container {
+      flex: 1;
+      padding: 24px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      scroll-behavior: smooth;
+    }
+
+    .message-row {
+      display: flex;
+      gap: 12px;
+      max-width: 85%;
+      animation: messageSlideIn 0.25s ease forwards;
+    }
+
+    @keyframes messageSlideIn {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .message-row.user {
+      align-self: flex-end;
+      flex-direction: row-reverse;
+    }
+
+    .message-row.ai {
+      align-self: flex-start;
+    }
+
+    .msg-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 0.8rem;
+      font-weight: bold;
+    }
+
+    .user .msg-avatar {
+      background: var(--text-muted);
+      color: white;
+    }
+
+    .ai .msg-avatar {
+      background: var(--primary);
+      color: white;
+    }
+
+    .msg-content-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .user .msg-content-wrapper {
+      align-items: flex-end;
+    }
+
+    .message-bubble {
+      padding: 14px 18px;
+      border-radius: var(--radius-lg);
+      font-size: 0.95rem;
+      line-height: 1.55;
+      position: relative;
+      word-break: break-word;
+    }
+
+    .user .message-bubble {
+      background: var(--user-bubble);
+      color: var(--user-text);
+      border-bottom-right-radius: 4px;
+      box-shadow: 0 4px 12px rgba(29, 78, 216, 0.18);
+    }
+
+    .ai .message-bubble {
+      background: var(--ai-bubble);
+      color: var(--ai-text);
+      border: 1px solid var(--ai-border);
+      border-bottom-left-radius: 4px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .message-meta {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      padding: 0 4px;
+    }
+
+    .copy-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      color: var(--text-muted);
+      font-size: 0.72rem;
+      padding: 2px 6px;
+      border-radius: 4px;
+      transition: color 0.15s, background-color 0.15s;
+    }
+    .copy-btn:hover {
+      color: var(--primary);
+      background: var(--bg-surface-elevated);
+    }
+
+    /* Typing Animation */
+    .typing-indicator {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 16px 20px;
+      background: var(--ai-bubble);
+      border: 1px solid var(--ai-border);
+      border-radius: var(--radius-lg);
+      border-bottom-left-radius: 4px;
+      width: fit-content;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .typing-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--primary);
+      opacity: 0.4;
+      animation: typingBlink 1.4s infinite both;
+    }
+
+    .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+    .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+    @keyframes typingBlink {
+      0%, 80%, 100% { opacity: 0.3; transform: scale(0.85); }
+      40% { opacity: 1; transform: scale(1.15); }
+    }
+
+    /* Input Bar */
+    .chat-input-area {
+      padding: 16px 24px;
+      border-top: 1px solid var(--border-color);
+      background: var(--bg-surface);
+    }
+
+    .chat-form {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-full);
+      padding: 6px 10px 6px 20px;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .chat-form:focus-within {
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+
+    .chat-input {
+      flex: 1;
+      border: none;
+      background: transparent;
+      font-size: 0.95rem;
+      color: var(--text-main);
+      outline: none;
+      padding: 8px 0;
+    }
+
+    .chat-input::placeholder {
+      color: var(--text-muted);
+    }
+
+    .send-btn {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-color 0.15s, transform 0.15s;
+      flex-shrink: 0;
+    }
+    .send-btn:hover {
+      background: var(--primary-hover);
+      transform: scale(1.05);
+    }
+    .send-btn:disabled {
+      background: var(--border-color);
+      color: var(--text-muted);
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .chat-disclaimer {
+      text-align: center;
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      margin-top: 8px;
+    }
+
+    /* ==========================================================================
+       6. SCHOOL INFORMATION CARDS SECTION
+       ========================================================================== */
+    .school-info-section {
+      padding: 60px 0;
+      border-top: 1px solid var(--border-color);
+      background: var(--bg-surface-elevated);
+    }
+
+    .section-header {
+      text-align: center;
+      max-width: 600px;
+      margin: 0 auto 40px auto;
+    }
+
+    .section-title {
+      font-family: var(--font-display);
+      font-size: 1.85rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: var(--text-main);
+    }
+
+    .section-subtitle {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 24px;
+    }
+
+    .info-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .info-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-lg);
+      border-color: var(--primary);
+    }
+
+    .card-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius-md);
+      background: var(--primary-light);
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+    }
+
+    .info-card h4 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: var(--text-main);
+    }
+
+    .info-card p {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+      margin-bottom: 16px;
+    }
+
+    .card-link {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--primary);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* ==========================================================================
+       7. CONTACT & LOCATION SECTION
+       ========================================================================== */
+    .contact-section {
+      padding: 60px 0;
+      background: var(--bg-surface);
+    }
+
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      align-items: center;
+    }
+
+    .contact-card {
+      background: var(--bg-surface-elevated);
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      border: 1px solid var(--border-color);
+    }
+
+    .contact-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .contact-item-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--primary-light);
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .contact-item-text h5 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .contact-item-text p {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+    }
+
+    /* ==========================================================================
+       8. FOOTER
+       ========================================================================== */
+    .footer {
+      border-top: 1px solid var(--border-color);
+      background: var(--bg-surface);
+      padding: 40px 0 24px 0;
+      font-size: 0.9rem;
+    }
+
+    .footer-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 20px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .footer-copy {
+      text-align: center;
+      padding-top: 20px;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    /* ==========================================================================
+       9. API KEY CONFIG MODAL
+       ========================================================================== */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.25s ease;
+      padding: 20px;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      max-width: 500px;
+      width: 100%;
+      padding: 28px;
+      box-shadow: var(--shadow-xl);
+      transform: scale(0.95);
+      transition: transform 0.2s ease;
+    }
+
+    .modal-overlay.active .modal-card {
+      transform: scale(1);
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .modal-header h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .modal-close {
+      color: var(--text-muted);
+      cursor: pointer;
+    }
+    .modal-close:hover {
+      color: var(--text-main);
+    }
+
+    .modal-body p {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-bottom: 18px;
+      line-height: 1.5;
+    }
+
+    .code-box {
+      background: var(--bg-surface-elevated);
+      padding: 10px 14px;
+      border-radius: var(--radius-sm);
+      font-family: monospace;
+      font-size: 0.8rem;
+      margin-bottom: 16px;
+      border: 1px dashed var(--border-color);
+      color: var(--primary);
+    }
+
+    .input-field {
+      width: 100%;
+      padding: 12px 16px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-color);
+      background: var(--bg-surface-elevated);
+      color: var(--text-main);
+      font-size: 0.9rem;
+      outline: none;
+      margin-bottom: 18px;
+    }
+    .input-field:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+    }
+
+    .btn-secondary {
+      padding: 10px 18px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-color);
+      background: var(--bg-surface-elevated);
+      color: var(--text-main);
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .btn-primary {
+      padding: 10px 20px;
+      border-radius: var(--radius-md);
+      background: var(--primary);
+      color: white;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+    .btn-primary:hover {
+      background: var(--primary-hover);
+    }
+
+    /* ==========================================================================
+       10. RESPONSIVE BREAKPOINTS
+       ========================================================================== */
+    @media (max-width: 900px) {
+      .chat-wrapper {
+        grid-template-columns: 1fr;
+        height: 760px;
+      }
+      .chat-sidebar {
+        display: none; /* toggleable on mobile */
+      }
+      .chat-sidebar.mobile-open {
+        display: flex;
+        position: absolute;
+        inset: 0;
+        z-index: 50;
+      }
+      .contact-grid {
+        grid-template-columns: 1fr;
+      }
+      .nav-links {
+        display: none;
+      }
+      .mobile-menu-btn {
+        display: flex;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .hero-title {
+        font-size: 1.8rem;
+      }
+      .chat-wrapper {
+        height: 600px;
+        border-radius: 0;
+        border-left: none;
+        border-right: none;
+      }
+      .container {
+        padding: 0 16px;
+      }
+      .message-row {
+        max-width: 95%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ==================== NAVIGATION BAR ==================== -->
+  <header class="navbar">
+    <div class="container nav-inner">
+      <div class="brand-logo">
+        <div class="brand-icon">
+          <i data-lucide="graduation-cap"></i>
+        </div>
+        <div class="brand-text">
+          <h1>Oakridge Academy</h1>
+          <span>Smart Campus AI</span>
+        </div>
+      </div>
+
+      <nav class="nav-links">
+        <a href="#chat" class="active">AI Chatbot</a>
+        <a href="#info">Academics & Info</a>
+        <a href="#admissions">Admissions</a>
+        <a href="#contact">Contact Office</a>
+      </nav>
+
+      <div class="nav-actions">
+        <!-- API Key settings button -->
+        <button id="configModalTrigger" class="config-modal-btn" title="Configure Gemini API Key">
+          <i data-lucide="key"></i>
+        </button>
+
+        <!-- Theme Toggle Button -->
+        <button id="themeToggleBtn" class="theme-toggle-btn" title="Toggle Light / Dark Mode">
+          <i data-lucide="moon" id="themeIcon"></i>
+        </button>
+
+        <a href="#contact" class="cta-portal-btn">
+          <i data-lucide="phone-call" style="width: 16px; height: 16px;"></i>
+          <span>Campus Desk</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==================== HERO SECTION ==================== -->
+  <section class="hero-banner">
+    <div class="container">
+      <div class="hero-badge">
+        <span class="pulse-dot"></span>
+        <span>AI Campus Assistant Ready 24/7</span>
+      </div>
+      <h2 class="hero-title">Ask anything about <span>Oakridge Academy</span></h2>
+      <p class="hero-subtitle">
+        Instant answers on admissions, daily schedules, examination notices, fee structures, and academic support for students, parents & teachers.
+      </p>
+    </div>
+  </section>
+
+  <!-- ==================== CHATBOT SECTION ==================== -->
+  <section class="chat-section" id="chat">
+    <div class="container">
+      <div class="chat-wrapper">
+        
+        <!-- Sidebar with Quick Prompts & Status -->
+        <aside class="chat-sidebar" id="chatSidebar">
+          <div class="sidebar-header">
+            <span class="sidebar-title">
+              <i data-lucide="sparkles" style="width: 14px; height: 14px;"></i>
+              Quick Inquiries
+            </span>
+          </div>
+
+          <button id="newChatSidebarBtn" class="new-chat-btn">
+            <i data-lucide="plus-circle" style="width: 18px; height: 18px;"></i>
+            <span>Start Fresh Chat</span>
+          </button>
+
+          <div class="topics-list">
+            <button class="topic-chip" data-prompt="What are the school timings for primary and high school?">
+              <i data-lucide="clock" style="width: 16px; height: 16px;"></i>
+              <span>What are the school timings?</span>
+            </button>
+            <button class="topic-chip" data-prompt="Tell me about the admission procedure and eligibility for next year.">
+              <i data-lucide="user-plus" style="width: 16px; height: 16px;"></i>
+              <span>Tell me about admission.</span>
+            </button>
+            <button class="topic-chip" data-prompt="What subjects and electives are available for secondary grades?">
+              <i data-lucide="book-open" style="width: 16px; height: 16px;"></i>
+              <span>What subjects are available?</span>
+            </button>
+            <button class="topic-chip" data-prompt="How can I contact the school administration office or principal?">
+              <i data-lucide="phone" style="width: 16px; height: 16px;"></i>
+              <span>How can I contact the school?</span>
+            </button>
+            <button class="topic-chip" data-prompt="Can you explain photosynthesis in simple terms for a 7th grader?">
+              <i data-lucide="lightbulb" style="width: 16px; height: 16px;"></i>
+              <span>Explain this topic to me.</span>
+            </button>
+            <button class="topic-chip" data-prompt="What is the school fee payment schedule and available payment methods?">
+              <i data-lucide="credit-card" style="width: 16px; height: 16px;"></i>
+              <span>School fee details & dates</span>
+            </button>
+          </div>
+
+          <!-- API Connection Status -->
+          <div class="api-status-box">
+            <div class="status-row">
+              <span style="font-weight: 600;">Gemini 1.5 Flash</span>
+              <span id="apiStatusIndicator" class="status-badge online">
+                <i data-lucide="check-circle-2" style="width: 14px; height: 14px;"></i>
+                Ready
+              </span>
+            </div>
+            <div id="apiKeyNotice" class="config-trigger">
+              Using preset or custom key (click to modify)
+            </div>
+          </div>
+        </aside>
+
+        <!-- Main Chat Area -->
+        <main class="chat-main">
+          <!-- Chat Header -->
+          <div class="chat-header">
+            <div class="assistant-profile">
+              <div class="bot-avatar">
+                <i data-lucide="bot" style="width: 24px; height: 24px;"></i>
+                <div class="online-indicator"></div>
+              </div>
+              <div class="assistant-details">
+                <h3>Oakridge AI Guide <span style="font-size: 0.7rem; background: var(--badge-bg); color: var(--badge-text); padding: 2px 8px; border-radius: 10px; font-weight: 600;">Official</span></h3>
+                <p>Always active • Students, Parents & Teachers Welcome</p>
+              </div>
+            </div>
+
+            <div class="chat-header-actions">
+              <button id="clearChatBtn" class="icon-action-btn" title="Clear conversation history">
+                <i data-lucide="trash-2" style="width: 16px; height: 16px;"></i>
+                <span>Clear</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Messages Stream Container -->
+          <div class="messages-container" id="messagesContainer">
+            <!-- Messages will be dynamically rendered here -->
+          </div>
+
+          <!-- Input Controls Form -->
+          <div class="chat-input-area">
+            <form id="chatForm" class="chat-form">
+              <input 
+                type="text" 
+                id="messageInput" 
+                class="chat-input" 
+                placeholder="Ask about school schedule, admissions, homework..." 
+                autocomplete="off"
+                required
+              />
+              <button type="submit" id="sendBtn" class="send-btn" title="Send message">
+                <i data-lucide="send" style="width: 18px; height: 18px;"></i>
+              </button>
+            </form>
+            <div class="chat-disclaimer">
+              Oakridge AI provides general school guidance. For confidential records, please consult the School Office.
+            </div>
+          </div>
+
+        </main>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== SCHOOL INFORMATION SECTION ==================== -->
+  <section class="school-info-section" id="info">
+    <div class="container">
+      <div class="section-header">
+        <h3 class="section-title">Campus Information Hub</h3>
+        <p class="section-subtitle">Quick reference academic highlights for the current school year</p>
+      </div>
+
+      <div class="info-grid">
+        <div class="info-card">
+          <div class="card-icon">
+            <i data-lucide="calendar"></i>
+          </div>
+          <h4>Timetable & Hours</h4>
+          <p>Primary Wing: 8:00 AM – 2:00 PM<br>Middle & High: 7:45 AM – 3:15 PM<br>Office: Mon-Fri, 7:30 AM – 4:30 PM</p>
+          <a href="#chat" class="card-link ask-ai-link" data-question="Give me the detailed daily bell schedule and break timings.">Ask AI about timings →</a>
+        </div>
+
+        <div class="info-card" id="admissions">
+          <div class="card-icon">
+            <i data-lucide="file-text"></i>
+          </div>
+          <h4>Admissions 2025-26</h4>
+          <p>Applications are open for Kindergarten through Grade 11. Merit scholarships and sibling fee concessions available.</p>
+          <a href="#chat" class="card-link ask-ai-link" data-question="What documents are required for admission application?">Check criteria with AI →</a>
+        </div>
+
+        <div class="info-card">
+          <div class="card-icon">
+            <i data-lucide="award"></i>
+          </div>
+          <h4>Curriculum & STEAM</h4>
+          <p>CBSE & International curriculum featuring Robotics lab, advanced Science labs, Olympic sports coaching, and fine arts.</p>
+          <a href="#chat" class="card-link ask-ai-link" data-question="What sports and extracurricular activities does the school offer?">Inquire on electives →</a>
+        </div>
+
+        <div class="info-card">
+          <div class="card-icon">
+            <i data-lucide="bell"></i>
+          </div>
+          <h4>Recent Notices</h4>
+          <p>Annual Sports Day scheduled for Nov 24. Mid-term examination results will be published on the parent portal this Friday.</p>
+          <a href="#chat" class="card-link ask-ai-link" data-question="When are the next parent-teacher meetings and holidays?">Check calendar →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== CONTACT SECTION ==================== -->
+  <section class="contact-section" id="contact">
+    <div class="container">
+      <div class="contact-grid">
+        <div>
+          <h3 class="section-title">Get in Touch with Our Administration</h3>
+          <p class="section-subtitle" style="margin-bottom: 24px;">
+            Have specific inquiries about enrollment, transcripts, or personal student matters? Our campus staff is here to help.
+          </p>
+
+          <div class="contact-card">
+            <div class="contact-item">
+              <div class="contact-item-icon">
+                <i data-lucide="map-pin"></i>
+              </div>
+              <div class="contact-item-text">
+                <h5>Campus Address</h5>
+                <p>450 University Crest Boulevard, Academic District, CA 90210</p>
+              </div>
+            </div>
+
+            <div class="contact-item">
+              <div class="contact-item-icon">
+                <i data-lucide="phone"></i>
+              </div>
+              <div class="contact-item-text">
+                <h5>Front Office Hotline</h5>
+                <p>+1 (555) 849-2000 / Ext. 102 (Admissions)</p>
+              </div>
+            </div>
+
+            <div class="contact-item">
+              <div class="contact-item-icon">
+                <i data-lucide="mail"></i>
+              </div>
+              <div class="contact-item-text">
+                <h5>Email Inquiries</h5>
+                <p>office@oakridgeacademy.edu / admissions@oakridgeacademy.edu</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="background: var(--bg-surface-elevated); padding: 32px; border-radius: var(--radius-lg); border: 1px solid var(--border-color);">
+          <h4 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 12px;">Parent Visit Request</h4>
+          <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 20px;">
+            Schedule a physical guided campus tour or meeting with our counselors.
+          </p>
+          <div style="display: flex; flex-direction: column; gap: 14px;">
+            <input type="text" class="input-field" placeholder="Parent / Guardian Full Name" style="margin-bottom: 0;">
+            <input type="email" class="input-field" placeholder="Email Address" style="margin-bottom: 0;">
+            <input type="tel" class="input-field" placeholder="Contact Phone Number" style="margin-bottom: 0;">
+            <button class="cta-portal-btn" style="justify-content: center; padding: 14px; border-radius: var(--radius-md);" onclick="alert('Thank you! Our admissions coordinator will contact you shortly.')">
+              Book Campus Tour
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== FOOTER ==================== -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-inner">
+        <div class="brand-logo">
+          <div class="brand-icon" style="width: 36px; height: 36px;">
+            <i data-lucide="graduation-cap" style="width: 20px; height: 20px;"></i>
+          </div>
+          <div class="brand-text">
+            <h1 style="font-size: 1.05rem;">Oakridge Academy</h1>
+            <span>Excellence in Education</span>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 20px; font-size: 0.88rem; color: var(--text-muted);">
+          <a href="#">Privacy Policy</a>
+          <a href="#">Student Code of Conduct</a>
+          <a href="#">Parent Portal</a>
+          <a href="#">Faculty Directory</a>
+        </div>
+      </div>
+
+      <div class="footer-copy">
+        &copy; 2025 Oakridge Academy. All rights reserved. Powered by Google Gemini AI Educational Engine.
+      </div>
+    </div>
+  </footer>
+
+  <!-- ==================== GEMINI API CONFIGURATION MODAL ==================== -->
+  <div class="modal-overlay" id="configModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>Gemini API Configuration</h3>
+        <button class="modal-close" id="closeModalBtn">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>
+          Enter your Google Gemini API key to activate live generative responses. Your key is stored strictly inside your browser's <code>localStorage</code> and never sent to any third-party server.
+        </p>
+
+        <div class="code-box">
+          // Alternatively edit the variable in script.js:<br>
+          const GEMINI_API_KEY = "YOUR_GEMINI_API_KEY";
+        </div>
+
+        <label style="font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 6px;">
+          Gemini API Key:
+        </label>
+        <input 
+          type="password" 
+          id="apiKeyInput" 
+          class="input-field" 
+          placeholder="AIzaSy..." 
+          autocomplete="off"
+        />
+
+        <div style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 20px;">
+          Don't have a key? Get a free API key at <a href="https://aistudio.google.com/" target="_blank" style="color: var(--primary); text-decoration: underline;">Google AI Studio</a>.
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button id="cancelModalBtn" class="btn-secondary">Cancel</button>
+        <button id="saveKeyBtn" class="btn-primary">Save Key</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       11. JAVASCRIPT LOGIC & GEMINI INTEGRATION
+       ========================================================================== -->
+  <script>
+    /**
+     * OAKRIDGE ACADEMY AI CHATBOT ENGINE
+     * -------------------------------------------------------------
+     * Pure Vanilla JavaScript - No frameworks required.
+     * Integrates with Google Gemini API (gemini-1.5-flash / gemini-pro)
+     */
+
+    /* CONFIGURATION PLACEHOLDER
+       Replace "YOUR_GEMINI_API_KEY" with your actual key, OR use the Key button in the UI. */
+    const GEMINI_API_CONFIG = {
+      DEFAULT_API_KEY: "YOUR_GEMINI_API_KEY", // <-- Enter your key here if hardcoding for local testing
+      MODEL: "gemini-1.5-flash",
+      SYSTEM_INSTRUCTION: `You are a helpful AI assistant for Oakridge Academy school. 
+Answer students, parents and teachers politely, encouragingly, and clearly. 
+Give simple, well-structured explanations suitable for students. 
+If you do not know school-specific information (such as personal grades, confidential medical files, or unannounced test answers), do not invent it. 
+Clearly tell the user that the information is not available and suggest contacting the school office via office@oakridgeacademy.edu or +1 (555) 849-2000.
+School General Facts:
+- School Name: Oakridge Academy
+- Grades: Pre-K to Grade 12
+- School Timings: Primary: 8:00 AM - 2:00 PM; Middle & High: 7:45 AM - 3:15 PM
+- Curriculum: STEM, Arts, International Baccalaureate & CBSE standards
+- Annual Sports Day: November 24th
+- Admissions: Open for 2025-2026 Academic Year
+`
+    };
+
+    // DOM Elements
+    const messagesContainer = document.getElementById('messagesContainer');
+    const chatForm = document.getElementById('chatForm');
+    const messageInput = document.getElementById('messageInput');
+    const sendBtn = document.getElementById('sendBtn');
+    const clearChatBtn = document.getElementById('clearChatBtn');
+    const newChatSidebarBtn = document.getElementById('newChatSidebarBtn');
+    const themeToggleBtn = document.getElementById('themeToggleBtn');
+    const themeIcon = document.getElementById('themeIcon');
+    const configModalTrigger = document.getElementById('configModalTrigger');
+    const configModal = document.getElementById('configModal');
+    const closeModalBtn = document.getElementById('closeModalBtn');
+    const cancelModalBtn = document.getElementById('cancelModalBtn');
+    const saveKeyBtn = document.getElementById('saveKeyBtn');
+    const apiKeyInput = document.getElementById('apiKeyInput');
+    const apiKeyNotice = document.getElementById('apiKeyNotice');
+    const apiStatusIndicator = document.getElementById('apiStatusIndicator');
+
+    // Conversation State History for Gemini Multi-turn context
+    let chatHistory = [];
+    let isWaitingForResponse = false;
+
+    // Initialize application
+    document.addEventListener('DOMContentLoaded', () => {
+      // 1. Initialize Icons
+      if (window.lucide) {
+        lucide.createIcons();
+      }
+
+      // 2. Load Theme
+      initTheme();
+
+      // 3. Load API Key state
+      initApiKey();
+
+      // 4. Populate initial welcome message
+      renderWelcomeMessage();
+
+      // 5. Setup quick inquiry chips
+      setupTopicChips();
+    });
+
+    /* ==================== THEME MANAGEMENT ==================== */
+    function initTheme() {
+      const savedTheme = localStorage.getItem('oakridge_theme') || 'light';
+      setTheme(savedTheme);
+
+      themeToggleBtn.addEventListener('click', () => {
+        const currentTheme = document.documentElement.getAttribute('data-theme');
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        setTheme(newTheme);
+      });
+    }
+
+    function setTheme(theme) {
+      document.documentElement.setAttribute('data-theme', theme);
+      localStorage.setItem('oakridge_theme', theme);
+      if (themeIcon) {
+        themeIcon.setAttribute('data-lucide', theme === 'dark' ? 'sun' : 'moon');
+        if (window.lucide) lucide.createIcons();
+      }
+    }
+
+    /* ==================== API KEY MANAGEMENT ==================== */
+    function getActiveApiKey() {
+      const storedKey = localStorage.getItem('oakridge_gemini_key');
+      if (storedKey && storedKey.trim() !== '') {
+        return storedKey.trim();
+      }
+      return GEMINI_API_CONFIG.DEFAULT_API_KEY;
+    }
+
+    function initApiKey() {
+      const key = getActiveApiKey();
+      updateApiStatusUI(key);
+
+      configModalTrigger.addEventListener('click', () => {
+        apiKeyInput.value = key === 'YOUR_GEMINI_API_KEY' ? '' : key;
+        configModal.classList.add('active');
+      });
+
+      apiKeyNotice.addEventListener('click', () => {
+        apiKeyInput.value = key === 'YOUR_GEMINI_API_KEY' ? '' : key;
+        configModal.classList.add('active');
+      });
+
+      closeModalBtn.addEventListener('click', () => configModal.classList.remove('active'));
+      cancelModalBtn.addEventListener('click', () => configModal.classList.remove('active'));
+
+      saveKeyBtn.addEventListener('click', () => {
+        const newKey = apiKeyInput.value.trim();
+        if (newKey) {
+          localStorage.setItem('oakridge_gemini_key', newKey);
+        } else {
+          localStorage.removeItem('oakridge_gemini_key');
+        }
+        configModal.classList.remove('active');
+        updateApiStatusUI(getActiveApiKey());
+        appendSystemNotice("API configuration updated. You're ready to chat!");
+      });
+    }
+
+    function updateApiStatusUI(key) {
+      const isPlaceholder = !key || key === 'YOUR_GEMINI_API_KEY';
+      if (isPlaceholder) {
+        apiStatusIndicator.className = 'status-badge config';
+        apiStatusIndicator.innerHTML = `<i data-lucide="alert-circle" style="width: 14px; height: 14px;"></i> Key Needed`;
+        apiKeyNotice.textContent = "Click here to add your Gemini API Key";
+      } else {
+        apiStatusIndicator.className = 'status-badge online';
+        apiStatusIndicator.innerHTML = `<i data-lucide="check-circle-2" style="width: 14px; height: 14px;"></i> Ready`;
+        apiKeyNotice.textContent = "Custom key active (tap to change)";
+      }
+      if (window.lucide) lucide.createIcons();
+    }
+
+    /* ==================== CHATBOT UI HANDLING ==================== */
+    function formatTime(date = new Date()) {
+      return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    }
+
+    function renderWelcomeMessage() {
+      messagesContainer.innerHTML = '';
+      const welcomeHTML = `
+        <div class="message-row ai">
+          <div class="msg-avatar">AI</div>
+          <div class="msg-content-wrapper">
+            <div class="message-bubble">
+              <strong>Hello & Welcome to Oakridge Academy! 🎓</strong><br>
+              I am your 24/7 AI Campus Assistant. How can I help you today? You can ask me about:
+              <ul style="margin: 8px 0 0 18px; line-height: 1.6;">
+                <li>School timings, daily routine & holidays</li>
+                <li>Admission requirements and fee schedules</li>
+                <li>Course subjects, electives & school activities</li>
+                <li>Homework explanations or general academic queries</li>
+              </ul>
+            </div>
+            <div class="message-meta">
+              <span>${formatTime()}</span>
+              <span>• Oakridge AI</span>
+            </div>
+          </div>
+        </div>
+      `;
+      messagesContainer.innerHTML = welcomeHTML;
+      chatHistory = [];
+    }
+
+    function appendMessage(sender, text) {
+      const row = document.createElement('div');
+      row.className = `message-row ${sender}`;
+      
+      const avatarContent = sender === 'user' ? 'You' : 'AI';
+      const time = formatTime();
+
+      let formattedText = escapeHTML(text).replace(/\n/g, '<br>');
+      // Basic markdown bold support
+      formattedText = formattedText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+
+      const copyBtnHTML = sender === 'ai' 
+        ? `<button class="copy-btn" onclick="copyMessageText(this)" title="Copy message">
+             <i data-lucide="copy" style="width: 12px; height: 12px;"></i> Copy
+           </button>` 
+        : '';
+
+      row.innerHTML = `
+        <div class="msg-avatar">${avatarContent}</div>
+        <div class="msg-content-wrapper">
+          <div class="message-bubble">${formattedText}</div>
+          <div class="message-meta">
+            <span>${time}</span>
+            ${copyBtnHTML}
+          </div>
+        </div>
+      `;
+
+      messagesContainer.appendChild(row);
+      scrollToBottom();
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function showTypingIndicator() {
+      const typingRow = document.createElement('div');
+      typingRow.className = 'message-row ai';
+      typingRow.id = 'typingIndicatorRow';
+      typingRow.innerHTML = `
+        <div class="msg-avatar">AI</div>
+        <div class="msg-content-wrapper">
+          <div class="typing-indicator">
+            <span class="typing-dot"></span>
+            <span class="typing-dot"></span>
+            <span class="typing-dot"></span>
+          </div>
+        </div>
+      `;
+      messagesContainer.appendChild(typingRow);
+      scrollToBottom();
+    }
+
+    function removeTypingIndicator() {
+      const row = document.getElementById('typingIndicatorRow');
+      if (row) row.remove();
+    }
+
+    function scrollToBottom() {
+      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+
+    function escapeHTML(str) {
+      const p = document.createElement('p');
+      p.appendChild(document.createTextNode(str));
+      return p.innerHTML;
+    }
+
+    window.copyMessageText = function(btn) {
+      const bubble = btn.closest('.msg-content-wrapper').querySelector('.message-bubble');
+      const text = bubble.innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        btn.innerHTML = `<i data-lucide="check" style="width: 12px; height: 12px; color: var(--success);"></i> Copied!`;
+        if (window.lucide) lucide.createIcons();
+        setTimeout(() => {
+          btn.innerHTML = `<i data-lucide="copy" style="width: 12px; height: 12px;"></i> Copy`;
+          if (window.lucide) lucide.createIcons();
+        }, 2000);
+      });
+    };
+
+    function appendSystemNotice(noticeText) {
+      const div = document.createElement('div');
+      div.style.textAlign = 'center';
+      div.style.fontSize = '0.75rem';
+      div.style.color = 'var(--text-muted)';
+      div.style.padding = '4px 0';
+      div.innerHTML = `<em>${noticeText}</em>`;
+      messagesContainer.appendChild(div);
+      scrollToBottom();
+    }
+
+    /* ==================== GEMINI API CALL ==================== */
+    async function callGeminiApi(userMessage) {
+      const apiKey = getActiveApiKey();
+
+      // Check if API key is not configured
+      if (!apiKey || apiKey === "YOUR_GEMINI_API_KEY") {
+        return `⚠️ **Gemini API Key Needed**:\nTo get live AI answers, please click the 🔑 key icon in the navigation bar and enter your Google Gemini API Key, or configure the \`GEMINI_API_CONFIG.DEFAULT_API_KEY\` in your code.\n\nIn the meantime, you can review school timings and admission details in the Campus Hub section below!`;
+      }
+
+      // API Endpoint for Gemini 1.5 Flash
+      const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_API_CONFIG.MODEL}:generateContent?key=${apiKey}`;
+
+      // Build Multi-turn contents payload
+      const contents = [];
+      
+      // Inject previous context (up to last 6 messages to stay efficient)
+      const recentHistory = chatHistory.slice(-6);
+      recentHistory.forEach(item => {
+        contents.push({
+          role: item.role === 'user' ? 'user' : 'model',
+          parts: [{ text: item.text }]
+        });
+      });
+
+      // Add current user prompt
+      contents.push({
+        role: 'user',
+        parts: [{ text: userMessage }]
+      });
+
+      const payload = {
+        contents: contents,
+        systemInstruction: {
+          parts: [{ text: GEMINI_API_CONFIG.SYSTEM_INSTRUCTION }]
+        },
+        generationConfig: {
+          temperature: 0.7,
+          maxOutputTokens: 600
+        }
+      };
+
+      try {
+        const response = await fetch(endpoint, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+          const errData = await response.json().catch(() => ({}));
+          console.error("Gemini API Error details:", errData);
+          if (response.status === 400 || response.status === 403) {
+            return `We encountered an authentication or quota issue with the Gemini API (${response.status}). Please check your API key validity in the top key menu.`;
+          }
+          return `The school AI assistant service is momentarily busy (${response.status}). Please try again in a few seconds or contact the School Office directly at office@oakridgeacademy.edu.`;
+        }
+
+        const data = await response.json();
+        const candidate = data.candidates && data.candidates[0];
+        if (candidate && candidate.content && candidate.content.parts && candidate.content.parts.length > 0) {
+          return candidate.content.parts[0].text;
+        } else {
+          return "I received your question but couldn't generate a specific response. Please rephrase or contact the front office.";
+        }
+
+      } catch (error) {
+        console.error("Network or execution error:", error);
+        return "Unable to connect to the AI service. Please check your internet connection or try again shortly. For urgent inquiries, call +1 (555) 849-2000.";
+      }
+    }
+
+    /* ==================== FORM SUBMISSION ==================== */
+    async function handleUserMessage(messageText) {
+      if (!messageText || isWaitingForResponse) return;
+
+      const userText = messageText.trim();
+      if (!userText) return;
+
+      // 1. Display user message
+      appendMessage('user', userText);
+      messageInput.value = '';
+      isWaitingForResponse = true;
+      sendBtn.disabled = true;
+
+      // 2. Add to local memory history
+      chatHistory.push({ role: 'user', text: userText });
+
+      // 3. Show typing indicator
+      showTypingIndicator();
+
+      // 4. Request response from Gemini
+      const aiResponse = await callGeminiApi(userText);
+
+      // 5. Hide typing & render AI bubble
+      removeTypingIndicator();
+      appendMessage('ai', aiResponse);
+
+      // 6. Save AI reply in history
+      chatHistory.push({ role: 'model', text: aiResponse });
+
+      isWaitingForResponse = false;
+      sendBtn.disabled = false;
+      messageInput.focus();
+    }
+
+    chatForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      handleUserMessage(messageInput.value);
+    });
+
+    // Enter to send is default behavior with form, but handles shift+enter cleanly
+    messageInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        chatForm.dispatchEvent(new Event('submit'));
+      }
+    });
+
+    // Clear Chat
+    clearChatBtn.addEventListener('click', () => {
+      if (confirm('Clear the current conversation?')) {
+        renderWelcomeMessage();
+      }
+    });
+
+    newChatSidebarBtn.addEventListener('click', () => {
+      renderWelcomeMessage();
+      messageInput.focus();
+    });
+
+    /* ==================== QUICK INQUIRIES & CHIPS ==================== */
+    function setupTopicChips() {
+      // Sidebar topic chips
+      document.querySelectorAll('.topic-chip').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const prompt = btn.getAttribute('data-prompt');
+          if (prompt) handleUserMessage(prompt);
+        });
+      });
+
+      // Campus hub "Ask AI" links
+      document.querySelectorAll('.ask-ai-link').forEach(link => {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          const question = link.getAttribute('data-question');
+          if (question) {
+            document.getElementById('chat').scrollIntoView({ behavior: 'smooth' });
+            setTimeout(() => handleUserMessage(question), 400);
+          }
+        });
+      });
+    }
+
+  </script>
+</body>
+</html>
